@@ -1,0 +1,86 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+
+    /* Swift brand colors */
+    --primary: 174 69% 36%; /* Teal #1D9B8C */
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 39 94% 56%; /* Orange #F9A826 */
+    --secondary-foreground: 222.2 47.4% 11.2%;
+
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+
+    --accent: 210 76% 20%; /* Navy #0A3A5A */
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 174 69% 36%; /* Teal #1D9B8C */
+
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 210 76% 10%; /* Darker version of Navy */
+    --foreground: 210 40% 98%;
+
+    --card: 210 76% 15%; /* Slightly lighter Navy */
+    --card-foreground: 210 40% 98%;
+
+    --popover: 210 76% 15%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 174 69% 36%; /* Teal #1D9B8C */
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 39 94% 56%; /* Orange #F9A826 */
+    --secondary-foreground: 222.2 47.4% 11.2%;
+
+    --muted: 210 76% 20%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --accent: 174 69% 26%; /* Darker Teal */
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 210 76% 25%;
+    --input: 210 76% 25%;
+    --ring: 174 69% 36%; /* Teal #1D9B8C */
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* Swift logo animation */
+.swift-logo-hover {
+  transition: transform 0.3s ease;
+}
+
+.swift-logo-hover:hover {
+  transform: scale(1.05);
+}
