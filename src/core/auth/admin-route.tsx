@@ -1,51 +1,46 @@
 "use client"
 
 import type React from "react"
+
 import { useEffect } from "react"
 import { useRouter } from "next/navigation"
-import { useSession } from "@/src/contexts/session-provider"
-import { routes } from "@/src/core/routing/routes"
+import { useAuth } from "@/src/core/auth/auth-provider"
+import { LoadingScreen } from "@/src/core/components/loading-screen"
 
 interface AdminRouteProps {
   children: React.ReactNode
 }
 
-/**
- * AdminRoute - A component that protects routes that should only be accessible by admins
- * Redirects to unauthorized page if the user is not an admin
- */
 export function AdminRoute({ children }: AdminRouteProps) {
-  const { user, isLoading, isAdmin } = useSession()
+  const { user, loading } = useAuth()
   const router = useRouter()
+  const isAdmin = user?.user_metadata?.is_admin === true
 
   useEffect(() => {
-    // First check if the user is authenticated
-    if (!isLoading && !user) {
-      router.push(routes.login)
+    // If not loading and no user, redirect to login
+    if (!loading && !user) {
+      console.log("AdminRoute: No user, redirecting to login")
+      router.push("/login")
       return
     }
 
-    // Then check if the user is an admin
-    if (!isLoading && user && !isAdmin) {
-      console.log("User is not an admin, redirecting to unauthorized page")
-      router.push(routes.unauthorized)
+    // If user is not an admin, redirect to unauthorized
+    if (!loading && user && !isAdmin) {
+      console.log("AdminRoute: User is not admin, redirecting to unauthorized")
+      router.push("/unauthorized")
     }
-  }, [user, isLoading, isAdmin, router])
+  }, [user, loading, isAdmin, router])
 
-  if (isLoading) {
-    return (
-      <div className="flex min-h-screen items-center justify-center">
-        <div className="text-center">
-          <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent mx-auto"></div>
-          <p className="mt-4">Loading...</p>
-        </div>
-      </div>
-    )
+  // Show loading screen while checking auth
+  if (loading) {
+    return <LoadingScreen />
   }
 
-  if (!user || !isAdmin) {
-    return null // Will redirect in the useEffect
+  // If no user or not admin, don't render children
+  if ((!user || !isAdmin) && !loading) {
+    return null
   }
 
+  // User is authenticated and is admin, render children
   return <>{children}</>
 }

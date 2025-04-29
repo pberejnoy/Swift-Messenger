@@ -5,7 +5,7 @@ import type React from "react"
 import { useState, useEffect } from "react"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { supabase } from "@/src/services/supabase/client"
-import { Users, MessageSquare, Bell, AlertCircle } from "lucide-react"
+import { Users, MessageSquare, Bell } from "lucide-react"
 
 /**
  * AdminDashboard - Main dashboard component for the admin panel
@@ -18,14 +18,12 @@ export function AdminDashboard() {
     totalMessages: 0,
   })
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     async function fetchStats() {
       if (!supabase) {
         console.warn("Supabase client not initialized")
         setLoading(false)
-        setError("Supabase client not initialized")
         return
       }
 
@@ -35,42 +33,27 @@ export function AdminDashboard() {
           .from("users")
           .select("*", { count: "exact", head: true })
 
-        if (userError) {
-          console.error("Error fetching user count:", userError)
-          setError("Error fetching statistics. Please try again later.")
-          return
-        }
-
         // Fetch channel count
         const { count: channelCount, error: channelError } = await supabase
           .from("channels")
           .select("*", { count: "exact", head: true })
-
-        if (channelError) {
-          console.error("Error fetching channel count:", channelError)
-          setError("Error fetching statistics. Please try again later.")
-          return
-        }
 
         // Fetch message count
         const { count: messageCount, error: messageError } = await supabase
           .from("messages")
           .select("*", { count: "exact", head: true })
 
-        if (messageError) {
-          console.error("Error fetching message count:", messageError)
-          setError("Error fetching statistics. Please try again later.")
-          return
+        if (userError || channelError || messageError) {
+          console.error("Error fetching stats:", { userError, channelError, messageError })
+        } else {
+          setStats({
+            totalUsers: userCount || 0,
+            totalChannels: channelCount || 0,
+            totalMessages: messageCount || 0,
+          })
         }
-
-        setStats({
-          totalUsers: userCount || 0,
-          totalChannels: channelCount || 0,
-          totalMessages: messageCount || 0,
-        })
       } catch (error) {
         console.error("Error fetching admin stats:", error)
-        setError("An unexpected error occurred. Please try again later.")
       } finally {
         setLoading(false)
       }
@@ -82,19 +65,6 @@ export function AdminDashboard() {
   return (
     <div>
       <h1 className="text-3xl font-bold mb-6">Admin Dashboard</h1>
-
-      {error && (
-        <div className="mb-6">
-          <Card className="border-destructive">
-            <CardContent className="pt-6">
-              <div className="flex items-center gap-2 text-destructive">
-                <AlertCircle className="h-5 w-5" />
-                <p>{error}</p>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      )}
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 mb-8">
         <StatCard

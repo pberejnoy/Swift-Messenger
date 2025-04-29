@@ -1,27 +1,19 @@
 import { createClient } from "@supabase/supabase-js"
+import type { Database } from "@/src/lib/types/database.types"
 
 // Check if environment variables are defined
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || ""
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ""
 
-// Validate environment variables
-if (!supabaseUrl) {
-  console.warn("NEXT_PUBLIC_SUPABASE_URL is not defined")
+// Log warning if environment variables are missing
+if (!supabaseUrl || !supabaseAnonKey) {
+  console.warn("Supabase environment variables are missing. Authentication features will not work properly.")
 }
 
-if (!supabaseAnonKey) {
-  console.warn("NEXT_PUBLIC_SUPABASE_ANON_KEY is not defined")
-}
-
-// Create Supabase client only if both URL and key are available
-export const supabase =
-  supabaseUrl && supabaseAnonKey
-    ? createClient(supabaseUrl, supabaseAnonKey, {
-        auth: {
-          persistSession: true,
-          storageKey: "swift-messenger-auth",
-          autoRefreshToken: true,
-          detectSessionInUrl: true,
-        },
-      })
-    : null
+// Create Supabase client
+export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
+  auth: {
+    persistSession: true,
+    autoRefreshToken: true,
+  },
+})

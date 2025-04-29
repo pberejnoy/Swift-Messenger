@@ -10,10 +10,10 @@ export default function Home() {
 
       <div className="flex flex-col gap-4 w-full max-w-md">
         <Button asChild className="w-full">
-          <Link href={routes.login}>Sign in</Link>
+          <Link href={routes.public.login}>Sign in</Link>
         </Button>
         <Button asChild variant="outline" className="w-full">
-          <Link href={routes.register}>Create an account</Link>
+          <Link href={routes.public.register}>Create an account</Link>
         </Button>
         <div className="mt-4">
           <Button asChild variant="link">

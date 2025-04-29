@@ -1,39 +1,39 @@
 "use client"
 
 import type React from "react"
+
 import { useEffect } from "react"
-import { useRouter } from "next/navigation"
-import { useSession } from "@/src/contexts/session-provider"
-import { routes } from "@/src/core/routing/routes"
+import { useRouter, usePathname } from "next/navigation"
+import { useAuth } from "@/src/core/auth/auth-provider"
+import { LoadingScreen } from "@/src/core/components/loading-screen"
 
 interface ProtectedRouteProps {
   children: React.ReactNode
 }
 
 export function ProtectedRoute({ children }: ProtectedRouteProps) {
-  const { user, isLoading } = useSession()
+  const { user, loading } = useAuth()
   const router = useRouter()
+  const pathname = usePathname()
 
   useEffect(() => {
-    if (!isLoading && !user) {
-      router.push(routes.login)
+    // If not loading and no user, redirect to login
+    if (!loading && !user) {
+      console.log("ProtectedRoute: No user, redirecting to login")
+      router.push(`/login?redirect=${encodeURIComponent(pathname || "")}`)
     }
-  }, [user, isLoading, router])
+  }, [user, loading, router, pathname])
 
-  if (isLoading) {
-    return (
-      <div className="flex min-h-screen items-center justify-center">
-        <div className="text-center">
-          <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent mx-auto"></div>
-          <p className="mt-4">Loading...</p>
-        </div>
-      </div>
-    )
+  // Show loading screen while checking auth
+  if (loading) {
+    return <LoadingScreen />
   }
 
-  if (!user) {
-    return null // Will redirect in the useEffect
+  // If no user and not loading, don't render children
+  if (!user && !loading) {
+    return null
   }
 
+  // User is authenticated, render children
   return <>{children}</>
 }

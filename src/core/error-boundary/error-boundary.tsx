@@ -1,6 +1,8 @@
 "use client"
 
 import { Component, type ErrorInfo, type ReactNode } from "react"
+import { Button } from "@/components/ui/button"
+import { AlertCircle } from "lucide-react"
 
 interface ErrorBoundaryProps {
   fallback?: ReactNode
@@ -10,19 +12,31 @@ interface ErrorBoundaryProps {
 interface ErrorBoundaryState {
   hasError: boolean
   error: Error | null
+  errorInfo: ErrorInfo | null
 }
 
 export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
   constructor(props: ErrorBoundaryProps) {
     super(props)
-    this.state = { hasError: false, error: null }
+    this.state = {
+      hasError: false,
+      error: null,
+      errorInfo: null,
+    }
   }
 
   static getDerivedStateFromError(error: Error): ErrorBoundaryState {
-    return { hasError: true, error }
+    return {
+      hasError: true,
+      error,
+      errorInfo: null,
+    }
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo): void {
+    this.setState({
+      errorInfo,
+    })
     console.error("Error caught by ErrorBoundary:", error, errorInfo)
   }
 
@@ -33,19 +47,21 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
       }
 
       return (
-        <div className="flex flex-col items-center justify-center min-h-screen p-4 bg-red-50">
-          <div className="max-w-md w-full bg-white p-6 rounded-lg shadow-lg">
-            <h2 className="text-2xl font-bold text-red-600 mb-4">Something went wrong</h2>
-            <p className="text-gray-700 mb-4">The application encountered an unexpected error.</p>
-            <pre className="bg-gray-100 p-4 rounded text-sm overflow-auto max-h-40 mb-4">
-              {this.state.error?.message || "Unknown error"}
-            </pre>
-            <button
-              onClick={() => window.location.reload()}
-              className="w-full py-2 px-4 bg-red-600 text-white rounded hover:bg-red-700 transition-colors"
-            >
-              Reload page
-            </button>
+        <div className="flex min-h-screen items-center justify-center p-4 bg-background">
+          <div className="w-full max-w-md rounded-lg border bg-card p-6 shadow-lg">
+            <div className="mb-4 flex justify-center">
+              <AlertCircle className="h-12 w-12 text-destructive" />
+            </div>
+            <h2 className="mb-4 text-center text-2xl font-bold">Something went wrong</h2>
+            <p className="mb-4 text-center text-muted-foreground">The application encountered an unexpected error.</p>
+            {this.state.error && (
+              <div className="mb-4 rounded bg-muted p-4">
+                <p className="font-mono text-sm">{this.state.error.toString()}</p>
+              </div>
+            )}
+            <div className="flex justify-center">
+              <Button onClick={() => window.location.reload()}>Reload page</Button>
+            </div>
           </div>
         </div>
       )

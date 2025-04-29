@@ -1,2 +1,6 @@
-export * from "./admin-layout"
-// Remove the main-layout export if it doesn't exist
+export { MainLayout } from "./main-layout"
+export { AdminLayout } from "./admin-layout"
+export { Navbar } from "./navbar"
+export { Footer } from "./footer"
+export { AdminSidebar } from "./admin-sidebar"
+export { AdminHeader } from "./admin-header"

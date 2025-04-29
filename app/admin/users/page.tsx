@@ -1,7 +1,7 @@
 "use client"
 
 import { AdminRoute } from "@/src/core/auth/admin-route"
-import { AdminLayout } from "@/src/core/layout/admin-layout"
+import { AdminLayout } from "@/src/core/layout"
 
 export default function AdminUsersPage() {
   return (
