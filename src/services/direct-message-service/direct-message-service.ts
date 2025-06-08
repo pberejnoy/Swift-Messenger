@@ -15,13 +15,14 @@ export async function fetchDirectMessages(userId: string, otherUserId: string): 
 
     const { data, error } = await supabase
       .from("direct_messages")
-      .select(`
-        *,
+      .select(
+        `*,
         sender:sender_id(username, avatar_url),
-        recipient:recipient_id(username, avatar_url)
-      `)
-      .or(`sender_id.eq.${userId},recipient_id.eq.${userId}`)
-      .or(`sender_id.eq.${otherUserId},recipient_id.eq.${otherUserId}`)
+        recipient:recipient_id(username, avatar_url)`,
+      )
+      .or(
+        `and(sender_id.eq.${userId},recipient_id.eq.${otherUserId}),and(sender_id.eq.${otherUserId},recipient_id.eq.${userId})`,
+      )
       .order("created_at", { ascending: true })
 
     if (error) {
